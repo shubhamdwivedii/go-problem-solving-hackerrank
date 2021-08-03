@@ -30,6 +30,7 @@ func stones(n int32, a int32, b int32) []int32 {
 
 	var output Output
 
+	// Was less optimal
 	// for i := (a * (n-1)); i<= (b * (n -1)); i += diff {
 	//     output = append(output, i)
 	// }
