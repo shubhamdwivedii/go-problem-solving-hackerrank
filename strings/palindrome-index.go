@@ -16,39 +16,71 @@ import (
  * The function accepts STRING s as parameter.
  */
 
-func palindromeIndex(s string) int32 {
-	// Write your code here
+func palindrome(s string) bool {
+	left := 0
+	right := len(s) - 1
 
-	if checkPalindrome(s, int32(len(s)/2), len(s)%2 == 0) {
-		return int32(-1)
-	}
-
-	mid := int32(len(s)-1) / 2
-	even := int32(len(s)-1)%2 == 0
-	for i, _ := range s {
-		ss := s[:i] + s[i+1:]
-		if checkPalindrome(ss, mid, even) {
-			return int32(i)
-		}
-	}
-
-	return int32(-1)
-}
-
-func checkPalindrome(s string, mid int32, even bool) bool {
-	front := s[:mid]
-	back := s[mid:]
-	if !even {
-		back = s[mid+1:]
-	}
-
-	for i, ch := range front {
-		if ch != rune(back[len(back)-1-i]) {
+	for left < right {
+		if s[left] != s[right] {
 			return false
 		}
+		left++
+		right--
 	}
-
 	return true
+}
+
+// Complete the palindromeIndex function below.
+func palindromeIndex(s string) int32 {
+	l := len(s) - 1
+	for i := 0; i <= l; i, l = i+1, l-1 {
+		if s[i] == s[l] {
+			continue
+		}
+		if palindrome(s[i+1 : l+1]) {
+			return int32(i)
+		}
+		if palindrome(s[i:l]) {
+			return int32(l)
+		}
+		return -1
+	}
+	return -1
+}
+
+func checkPalindrome(s string, curr int32, broken bool) (int32, bool) {
+	fmt.Println("Checkpalin", s, curr, broken)
+	if len(s) <= 1 {
+		if !broken {
+			return -1, true
+		}
+		return curr, true
+	} else {
+		if s[0] == s[len(s)-1] {
+			if broken {
+				return checkPalindrome(s[1:len(s)-1], curr, broken)
+			}
+			return checkPalindrome(s[1:len(s)-1], curr+1, broken)
+		} else {
+			if broken {
+				return curr, false
+			}
+			broken = true
+
+			if s[1] == s[len(s)-1] {
+				// continue with left omited
+			}
+
+			leftRem, lpalin := checkPalindrome(s[1:], curr, broken)
+			rightRem, rpalin := checkPalindrome(s[:len(s)-2], int32(len(s))+curr-1, broken)
+
+			if lpalin {
+				return leftRem, true
+			}
+			return rightRem, rpalin
+
+		}
+	}
 }
 
 func main() {
